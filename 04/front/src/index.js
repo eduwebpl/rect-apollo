@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {ApolloProvider} from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
 import './index.css';
+import 'antd/dist/antd.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {client} from './apollo/client';
+import { client } from './apollo/client';
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <App />
+      <App />
   </ApolloProvider>,
   document.getElementById('root')
 );
