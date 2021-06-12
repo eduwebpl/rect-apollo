@@ -1,11 +1,27 @@
 import { Row, Col, Empty, Result, Button, Pagination } from 'antd';
+import {gql, useQuery} from '@apollo/client';
 import { Product } from './components/Product';
 import { Loader } from '../../components/Loader/Loader'
 
+const GET_PRODUCTS = gql`
+  query GetProducts {
+    viewer {
+      productPagination(page: 0, perPage: 8) {
+        items {
+          productID
+          name
+          unitPrice
+          category {
+            name
+          }
+        }
+      }
+    }
+  }
+`
+
 function ProductsPage() {
-  const data = true;
-  const loading = false;
-  const error = false;
+  const {data, loading, error, refetch} = useQuery(GET_PRODUCTS)
   
   if (loading) {
     return <Loader />
@@ -18,7 +34,7 @@ function ProductsPage() {
         title="Something went wrong..."
         subTitle="Please try again or contact with support."
         extra={[
-          <Button type="primary" key="retry">
+          <Button type="primary" key="retry" onClick={() => refetch()}>
             Retry
           </Button>
         ]}
@@ -26,75 +42,23 @@ function ProductsPage() {
     )
   }
   
+  const {viewer: {productPagination: {items}}} = data;
+  
   return (
     <div>
       {data ? (
         <>
           <Row gutter={[16, 16]}>
-            <Col span={6}>
-              <Product
-                title="Hello world!"
-                unitPrice={1}
-                productId={1}
-                category="something"
-              />
-            </Col>
-            <Col span={6}>
-              <Product
-                title="Hello world!"
-                unitPrice={1}
-                productId={1}
-                category="something"
-              />
-            </Col>
-            <Col span={6}>
-              <Product
-                title="Hello world!"
-                unitPrice={1}
-                productId={1}
-                category="something"
-              />
-            </Col>
-            <Col span={6}>
-              <Product
-                title="Hello world!"
-                unitPrice={1}
-                productId={1}
-                category="something"
-              />
-            </Col>
-            <Col span={6}>
-              <Product
-                title="Hello world!"
-                unitPrice={1}
-                productId={1}
-                category="something"
-              />
-            </Col>
-            <Col span={6}>
-              <Product
-                title="Hello world!"
-                unitPrice={1}
-                productId={1}
-                category="something"
-              />
-            </Col>
-            <Col span={6}>
-              <Product
-                title="Hello world!"
-                unitPrice={1}
-                productId={1}
-                category="something"
-              />
-            </Col>
-            <Col span={6}>
-              <Product
-                title="Hello world!"
-                unitPrice={1}
-                productId={1}
-                category="something"
-              />
-            </Col>
+            {items.map(({unitPrice, name, productID, category}) => (
+              <Col span={6} key={productID}>
+                <Product
+                  title={name}
+                  unitPrice={unitPrice}
+                  productId={productID}
+                  category={category.name}
+                />
+              </Col>
+            ))}
           </Row>
           
           <div style={{textAlign: 'center', marginTop: '16px'}}>
