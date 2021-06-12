@@ -35,8 +35,8 @@ export function OrderForm({ visible, onClose, productDetails }) {
             onFinish={handleSubmit}
           >
             <Form.Item
-              name="username"
-              rules={[{ required: true, message: 'Please input your Username!' }]}
+              name="street"
+              rules={[{ required: true, message: 'Please input your street!' }]}
             >
               <Input placeholder="Street" />
             </Form.Item>
