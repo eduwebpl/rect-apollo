@@ -12,6 +12,7 @@ const GET_PRODUCTS = gql`
           name
           unitPrice
           category {
+            categoryID
             name
           }
         }
