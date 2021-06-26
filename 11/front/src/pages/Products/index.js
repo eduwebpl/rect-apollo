@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Row, Col, Empty, Result, Button, Pagination } from 'antd';
-import {gql, useQuery, useMutation} from '@apollo/client';
+import {gql, useQuery} from '@apollo/client';
 import { Product } from './components/Product';
 import { Loader } from '../../components/Loader/Loader';
 import {useHistory} from 'react-router-dom';
@@ -29,18 +29,6 @@ const GET_PRODUCTS = gql`
 
   ${BASIC_PRODUCT_FRAGMENT}
   ${CATEGORY_FRAGMENT}
-`
-
-const MUTATION = gql`
-  mutation UpdateProduct($productId: Float, $name: String) {
-    updateProduct(record: {
-      _id: "60c4b18198c36f2c03a90e25",
-      productID: $productId,
-      name: $name
-    }) {
-      __typename
-    }
-  }
 `
 
 function ProductsPage() {
@@ -92,16 +80,6 @@ function ProductsPage() {
                   productId={productID}
                   category={category.name}
                 />
-                
-                <button onClick={() => {
-                  mutate({
-                    variables: {
-                      _id,
-                      productID,
-                      name: 'New name'
-                    }
-                  })
-                }}>Order</button>
               </Col>
             ))}
           </Row>
