@@ -48,7 +48,7 @@ function ProductDetails() {
     return <Loader />
   }
   
-  const {viewer: {product: {name, unitPrice, quantityPerUnit, category, supplier}}} = data;
+  const {viewer: {product: {name, unitPrice, quantityPerUnit, category, supplier, productID}}} = data;
   const {contactName, contactTitle, address} = supplier;
 
   return (
@@ -77,8 +77,8 @@ function ProductDetails() {
       <OrderForm
         visible={orderFormVisible}
         productDetails={{
-          name: 'My product name',
-          productID: 4
+          name,
+          productID
         }}
         onClose={() => setOrderFormVisible(false)}
       />

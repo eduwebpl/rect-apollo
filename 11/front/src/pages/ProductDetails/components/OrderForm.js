@@ -1,18 +1,62 @@
+import {useState} from 'react';
 import { Modal, Button, Result, Form, Input } from 'antd';
 import { SmileOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import {useMutation, gql} from '@apollo/client';
+import {generateRandomId} from '../../../utils/generateRandomId'
 
+const CREATE_ORDER_MUTATION = gql`
+  mutation CreateOrder($orderID: Float, $street: String, $postalCode: String, $country: String, $city: String) {
+    createOrder(record: {
+      orderID: $orderID,
+      shipAddress: {
+        street: $street,
+        city: $city,
+        postalCode: $postalCode,
+        country: $country,
+      }
+    }) {
+      __typename
+    }
+  }
+`;
 
 export function OrderForm({ visible, onClose, productDetails }) {
-  const isOrdered = false;
-  const isError = false;
+  const [isOrdered, setIsOrdered] = useState(false);
+  const [isError, setIsError] = useState(false)
+  const [createOrder] = useMutation(CREATE_ORDER_MUTATION, {
+    onCompleted: () => {
+      setIsOrdered(true)
+    },
+    onError: () => {
+      setIsError(true)
+    }
+  });
   const isFormState = !isOrdered && !isError;
 
   const { name } = productDetails;
   
-  const handleCancel = () => onClose();
+  const handleCancel = () => {
+    onClose();
+    setIsOrdered(false)
+    setIsError(false)
+  };
   
   const handleSubmit = (values) => {
-    console.log(values)
+    if (!values) {
+      return;
+    } 
+    
+    const {postalCode, street, country, city} = values;
+
+    createOrder({
+      variables: {
+        orderID: generateRandomId(),
+        postalCode,
+        street,
+        country,
+        city
+      }
+    })
   };
 
   return (
@@ -66,7 +110,7 @@ export function OrderForm({ visible, onClose, productDetails }) {
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" onClick={handleSubmit}>
+              <Button type="submit" htmlType="submit">
                 Submit
               </Button>
             </Form.Item>
