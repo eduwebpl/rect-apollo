@@ -43,8 +43,6 @@ function ProductsPage() {
     }
   })
   
-  const [mutate] = useMutation(MUTATION)
-  
   if (loading) {
     return <Loader />
   }
