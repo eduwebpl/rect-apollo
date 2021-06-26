@@ -4,6 +4,18 @@ export const client = new ApolloClient({
   uri: 'http://localhost:3000/northwind',
   cache: new InMemoryCache({
     typePolicies: {
+      Query: {
+        fields: {
+          viewer: {
+            merge: (existing = {}, incoming = {}) => {
+              return {...existing, ...incoming};
+            }
+          }
+        }
+      },
+      ProductPagination: {
+        keyFields: ['pageInfo']
+      },
       Product: {
         keyFields: ['productID']
       },

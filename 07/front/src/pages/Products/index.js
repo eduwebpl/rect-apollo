@@ -1,12 +1,20 @@
+import { useState } from 'react';
 import { Row, Col, Empty, Result, Button, Pagination } from 'antd';
 import {gql, useQuery} from '@apollo/client';
 import { Product } from './components/Product';
-import { Loader } from '../../components/Loader/Loader'
+import { Loader } from '../../components/Loader/Loader';
+import {useHistory} from 'react-router-dom';
+
+const PER_PAGE = 8;
 
 const GET_PRODUCTS = gql`
-  query GetProducts {
+  query GetProducts($perPage: Int, $page: Int) {
     viewer {
-      productPagination(page: 0, perPage: 8) {
+      productPagination(page: $page, perPage: $perPage) {
+        pageInfo {
+          pageCount
+          currentPage
+        }
         items {
           productID
           name
@@ -22,7 +30,16 @@ const GET_PRODUCTS = gql`
 `
 
 function ProductsPage() {
-  const {data, loading, error, refetch} = useQuery(GET_PRODUCTS)
+  const history = useHistory();
+  const searchParams = new URLSearchParams(window.location.search);
+  const pageParam = parseInt(searchParams.get('page'), 10);
+  const [page, setPage] = useState(pageParam);
+  const {data, loading, error, refetch} = useQuery(GET_PRODUCTS, {
+    variables: {
+      page,
+      perPage: PER_PAGE,
+    }
+  })
   
   if (loading) {
     return <Loader />
@@ -43,7 +60,8 @@ function ProductsPage() {
     )
   }
   
-  const {viewer: {productPagination: {items}}} = data;
+  const {viewer: {productPagination: {items, pageInfo}}} = data;
+  const {pageCount, currentPage} = pageInfo;
   
   return (
     <div>
@@ -63,7 +81,13 @@ function ProductsPage() {
           </Row>
           
           <div style={{textAlign: 'center', marginTop: '16px'}}>
-            <Pagination pageSize={8} current={1} total={50} />
+            <Pagination pageSize={PER_PAGE} current={currentPage} total={pageCount * PER_PAGE} onChange={(page) => {
+              history.push({
+                pathname: '/',
+                search: `?page=${page}`
+              })
+              setPage(page);
+            }} />
           </div>
         </>
       ) : (
