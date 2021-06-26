@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { OrderForm } from './components/OrderForm';
 import { gql, useQuery } from '@apollo/client';
 import { Loader } from '../../components/Loader/Loader';
+import { BASIC_PRODUCT_FRAGMENT, CATEGORY_FRAGMENT } from '../../apollo/fragments'
  
 const GET_PRODUCT_DETAILS = gql`
   query GetProductDetails($productId: Float) {
@@ -11,13 +12,10 @@ const GET_PRODUCT_DETAILS = gql`
       product(filter: {
         productID: $productId
       }) {
-        productID
-        name
-        unitPrice
+        ...BasicProduct
         quantityPerUnit
         category {
-          categoryID
-          name
+          ...CategoryFragment
         }
         supplier {
           companyName
@@ -30,6 +28,9 @@ const GET_PRODUCT_DETAILS = gql`
       }
     }
   }
+
+  ${BASIC_PRODUCT_FRAGMENT}
+  ${CATEGORY_FRAGMENT}
 `
 
 function ProductDetails() {

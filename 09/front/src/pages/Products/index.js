@@ -4,6 +4,7 @@ import {gql, useQuery} from '@apollo/client';
 import { Product } from './components/Product';
 import { Loader } from '../../components/Loader/Loader';
 import {useHistory} from 'react-router-dom';
+import { BASIC_PRODUCT_FRAGMENT, CATEGORY_FRAGMENT } from '../../apollo/fragments'
 
 const PER_PAGE = 8;
 
@@ -16,17 +17,17 @@ const GET_PRODUCTS = gql`
           currentPage
         }
         items {
-          productID
-          name
-          unitPrice
+          ...BasicProduct
           category {
-            categoryID
-            name
+            ...CategoryFragment
           }
         }
       }
     }
   }
+
+  ${BASIC_PRODUCT_FRAGMENT}
+  ${CATEGORY_FRAGMENT}
 `
 
 function ProductsPage() {
