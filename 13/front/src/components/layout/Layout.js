@@ -1,10 +1,38 @@
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { useEffect } from 'react';
+import { Layout, Menu, Breadcrumb, notification } from 'antd';
 import { Link } from "react-router-dom";
+import { useSubscription, gql } from '@apollo/client';
 import './Layout.css';
 
 const { Header, Content, Footer } = Layout;
 
+const SUBSCRIBE_CREATED_ORDER = gql`
+  subscription {
+    orderCreated {
+      orderID
+      shipAddress {
+        street
+        city
+      }
+    }
+  }
+`
+
 export function LayoutApp({ children }) {
+  const {data} = useSubscription(SUBSCRIBE_CREATED_ORDER)
+  // notification.open({message: 'Hello', description: 'desc!!'})
+  
+  useEffect(() => {
+    if (data) {
+      const {orderCreated: {orderID, shipAddress: {street, city}}} = data;
+      
+      notification.open({
+        message: `New order created! #${orderID}`,
+        description: `Street ${street}, City: ${city}`
+      })
+    }
+  }, [data])
+  
   return (
     <Layout className="layout">
       <Header>
