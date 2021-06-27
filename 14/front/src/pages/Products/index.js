@@ -8,7 +8,7 @@ import { BASIC_PRODUCT_FRAGMENT, CATEGORY_FRAGMENT } from '../../apollo/fragment
 
 const PER_PAGE = 8;
 
-const GET_PRODUCTS = gql`
+export const GET_PRODUCTS = gql`
   query GetProducts($perPage: Int, $page: Int) {
     viewer {
       productPagination(page: $page, perPage: $perPage) {
@@ -35,7 +35,7 @@ function ProductsPage() {
   const history = useHistory();
   const searchParams = new URLSearchParams(window.location.search);
   const pageParam = parseInt(searchParams.get('page'), 10);
-  const [page, setPage] = useState(pageParam);
+  const [page, setPage] = useState(pageParam || 1);
   const {data, loading, error, refetch} = useQuery(GET_PRODUCTS, {
     variables: {
       page,
