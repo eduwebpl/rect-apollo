@@ -4,7 +4,7 @@ import { SmileOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import {useMutation, gql} from '@apollo/client';
 import {generateRandomId} from '../../../utils/generateRandomId'
 
-const CREATE_ORDER_MUTATION = gql`
+export const CREATE_ORDER_MUTATION = gql`
   mutation CreateOrder($orderID: Float, $street: String, $postalCode: String, $country: String, $city: String) {
     createOrder(record: {
       orderID: $orderID,
@@ -20,7 +20,7 @@ const CREATE_ORDER_MUTATION = gql`
   }
 `;
 
-export function OrderForm({ visible, onClose, productDetails }) {
+export function OrderForm({ visible, onClose, productDetails, orderRandomId = generateRandomId() }) {
   const [isOrdered, setIsOrdered] = useState(false);
   const [isError, setIsError] = useState(false)
   const [createOrder] = useMutation(CREATE_ORDER_MUTATION, {
@@ -50,7 +50,7 @@ export function OrderForm({ visible, onClose, productDetails }) {
 
     createOrder({
       variables: {
-        orderID: generateRandomId(),
+        orderID: orderRandomId,
         postalCode,
         street,
         country,
