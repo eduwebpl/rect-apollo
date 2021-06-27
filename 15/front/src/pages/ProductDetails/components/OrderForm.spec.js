@@ -1,4 +1,4 @@
-import {render, waitFor} from '@testing-library/react';
+import {render, waitFor, fireEvent} from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
 import { OrderForm, CREATE_ORDER_MUTATION } from './OrderForm';
 import {generateRandomId} from '../../../utils/generateRandomId'
@@ -24,15 +24,22 @@ describe('OrderForm', () => {
       }
     ]
     
-    render(
+    const {getByPlaceholderText, getByText} = render(
       <MockedProvider mocks={mocks}>
          <OrderForm visible={true} productDetails={{}} onClose={jest.fn()} orderRandomId={orderRandomId} />
       </MockedProvider>
     );
     
+    fireEvent.change(getByPlaceholderText('Street'), { target: { value: 'Sosnowa' }})
+    fireEvent.change(getByPlaceholderText('City'), { target: { value: 'Krakow' }})
+    fireEvent.change(getByPlaceholderText('Country'), { target: { value: 'Polska' }})
+    fireEvent.change(getByPlaceholderText('Postal Code'), { target: { value: '31-333' }})
+    
+    fireEvent.click(getByText('Submit'))
     
     await waitFor(() => {
       // assertion here
+      expect(getByText('Great, your order is on the way!')).toBeInTheDocument();
     })
   })
 })
